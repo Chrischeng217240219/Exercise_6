@@ -1,24 +1,21 @@
 public class App {
-    // 店铺信息
     public String storeName;
     public String storeAddress;
     public String storeEmail;
     public long storePhone;
     public String storeMenu;
 
-    // 披萨信息
     private String pizzaIngredients;
     private double pizzaPrice;
 
-    // 小吃和饮料
     private String sides;
     private String drinks;
 
-    // 订单信息
     private String orderID;
     private double orderTotal;
 
-    // 构造函数
+    private String blackListedNumber = "12345678901234";
+
     public App(String name, String address, String email, long phone, String menu) {
         this.storeName = name;
         this.storeAddress = address;
@@ -27,14 +24,13 @@ public class App {
         this.storeMenu = menu;
     }
 
-    // 接受订单
     public void takeOrder(String id, String ingredients, double price, String sides, String drinks) {
         this.orderID = id;
         this.pizzaIngredients = ingredients;
         this.pizzaPrice = price;
         this.sides = sides;
         this.drinks = drinks;
-        this.orderTotal = price + 5.0; // 假设小吃和饮料的固定费用为5.0
+        this.orderTotal = price + 5.0;
 
         System.out.println("Order accepted!");
         System.out.println("Order is being prepared...");
@@ -42,10 +38,9 @@ public class App {
         makePizza();
     }
 
-    // 制作披萨
     private void makePizza() {
         try {
-            Thread.sleep(5000); // 模拟制作披萨的时间
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             System.out.println("Pizza preparation interrupted!");
         }
@@ -54,7 +49,6 @@ public class App {
         printReceipt();
     }
 
-    // 打印收据
     private void printReceipt() {
         System.out.println("******** RECEIPT ********");
         System.out.println("Store Name: " + storeName);
@@ -67,11 +61,50 @@ public class App {
         System.out.println("*************************");
     }
 
+    public void processCardPayment(String cardNumber, String expiryDate, int cvv) {
+        int cardLength = cardNumber.length();
+        if (cardLength == 14) {
+            System.out.println("Card accepted");
+        } else {
+            System.out.println("Invalid card");
+            return;
+        }
+
+        int firstCardDigit = Integer.parseInt(cardNumber.substring(0, 1));
+
+        if (cardNumber.equals(blackListedNumber)) {
+            System.out.println("Card is blackListed. Please use another card");
+            return;
+        }
+
+        int lastFourDigits = Integer.parseInt(cardNumber.substring(cardNumber.length() - 4));
+
+        String cardNumberToDisplay = cardNumber.charAt(0) + 
+                                     "*".repeat(cardNumber.length() - 5) + 
+                                     cardNumber.substring(cardNumber.length() - 4);
+
+        System.out.println("First Digit: " + firstCardDigit);
+        System.out.println("Last Four Digits: " + lastFourDigits);
+        System.out.println("Card Number to Display: " + cardNumberToDisplay);
+    }
+
+    public void specialOfTheDay(String pizzaOfTheDay, String sideOfTheDay, String specialPrice) {
+        StringBuilder special = new StringBuilder();
+        special.append("Today's Special:\n");
+        special.append("Pizza: ").append(pizzaOfTheDay).append("\n");
+        special.append("Side: ").append(sideOfTheDay).append("\n");
+        special.append("Special Price: ").append(specialPrice).append("\n");
+
+        System.out.println(special.toString());
+    }
+
     public static void main(String[] args) {
-        // 创建店铺实例
         App store = new App("Slice-o-Heaven", "123 Pizza Lane", "contact@sliceoheaven.com", 1234567890, "Pizza, Sides, Drinks");
 
-        // 接受订单
         store.takeOrder("ORDER123", "Pepperoni, Cheese, Tomato Sauce", 10.99, "Garlic Bread", "Coke");
+
+        store.processCardPayment("12345678901234", "12/25", 123);
+
+        store.specialOfTheDay("Margherita", "Garlic Bread", "$9.99");
     }
 }
